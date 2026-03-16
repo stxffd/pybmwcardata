@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Unit test / coverage reports
+.coverage
+.tox/
+.pytest_cache/
+htmlcov/
+
+# VS Code settings
+.vscode/
+
+# Python venv
+.venv/
+venv/
+
+# IDE
+.idea/
+*.swp
+
+# Temp files
+.tokens.json
+*.log
+*.tmp
