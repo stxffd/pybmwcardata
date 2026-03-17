@@ -9,13 +9,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from aiohttp import ClientSession
 
-from bmw_cardata.auth import (
+from pybmwcardata.auth import (
     AbstractAuth,
     DeviceAuth,
     _generate_code_challenge,
     _generate_code_verifier,
 )
-from bmw_cardata.exceptions import (
+from pybmwcardata.exceptions import (
     AuthenticationError,
     AuthorizationPendingError,
     DeviceCodeExpiredError,
@@ -269,3 +269,4 @@ class TestDeviceAuth:
                 interval=0,
                 timeout=0,  # Immediate timeout
             )
+

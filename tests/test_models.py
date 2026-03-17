@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bmw_cardata.models import (
+from pybmwcardata.models import (
     ChargingSession,
     Container,
     ContainerDetails,
@@ -187,3 +187,4 @@ class TestTyreDiagnosis:
         assert diagnosis.front_right is None
         assert diagnosis.rear_left is None
         assert diagnosis.rear_right is None
+

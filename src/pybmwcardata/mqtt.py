@@ -110,7 +110,7 @@ class CarDataMqttClient:
         except ImportError as err:
             raise MqttConnectionError(
                 "paho-mqtt is required for MQTT streaming. "
-                "Install with: pip install python-bmw-cardata[mqtt]"
+                "Install with: pip install pybmwcardata[mqtt]"
             ) from err
 
         if self._client is not None:
@@ -132,8 +132,12 @@ class CarDataMqttClient:
 
         client.username_pw_set(username=self._gcid, password=id_token)
 
-        # TLS setup
+        # TLS setup with explicit protocol version for compatibility
         context = ssl.create_default_context()
+        context.check_hostname = True
+        context.verify_mode = ssl.CERT_REQUIRED
+        # Force TLSv1.2 minimum (some servers require this)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
         client.tls_set_context(context)
         client.tls_insecure_set(False)
 
@@ -223,7 +227,7 @@ class CarDataMqttClient:
         except Exception:
             _LOGGER.exception("Error handling MQTT message")
 
-    # ── paho-mqtt callbacks (run in background thread) ────────────────
+    # â”€â”€ paho-mqtt callbacks (run in background thread) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     def _on_connect(
         self, client: Any, userdata: dict, flags: Any, rc: int, *args: Any
@@ -356,3 +360,4 @@ def _parse_streaming_payload(data: dict[str, Any]) -> list[TelematicDataEntry]:
             entries.append(TelematicDataEntry.from_api_response(name, value_data))
 
     return entries
+

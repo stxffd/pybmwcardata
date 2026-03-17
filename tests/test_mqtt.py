@@ -8,9 +8,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bmw_cardata.exceptions import MqttConnectionError
-from bmw_cardata.models import TelematicDataEntry
-from bmw_cardata.mqtt import (
+from pybmwcardata.exceptions import MqttConnectionError
+from pybmwcardata.models import TelematicDataEntry
+from pybmwcardata.mqtt import (
     CarDataMqttClient,
     MqttMessage,
     _parse_streaming_payload,
@@ -236,7 +236,7 @@ class TestCarDataMqttClient:
             gcid="my-gcid",
             id_token_provider=AsyncMock(),
         )
-        # No callback set — should not raise
+        # No callback set â€” should not raise
         mock_msg = MagicMock()
         mock_msg.topic = "my-gcid/VIN123"
         mock_msg.payload = b'{"telematicData": {}}'
@@ -297,3 +297,4 @@ class TestCarDataMqttClient:
         await client._handle_message(mock_msg)
         mqtt_msg = callback.call_args[0][0]
         assert mqtt_msg.vin == "WBA99887766554433"
+

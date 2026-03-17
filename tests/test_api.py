@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from bmw_cardata.api import CarDataApiClient
-from bmw_cardata.exceptions import (
+from pybmwcardata.api import CarDataApiClient
+from pybmwcardata.exceptions import (
     ApiError,
     AuthenticationError,
     ContainerError,
@@ -289,3 +289,4 @@ class TestErrorHandling:
 
         with pytest.raises(ContainerError):
             await api_client.get_container("invalid-id")
+

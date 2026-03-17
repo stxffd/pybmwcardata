@@ -373,53 +373,19 @@ class CarDataApiClient:
 
 
 # Common telematics descriptors useful for home automation
+# Limited to 10 descriptors to avoid API CU-400 Bad Request error
 DEFAULT_DESCRIPTORS = [
     # Location
     "vehicle.cabin.infotainment.navigation.currentLocation.longitude",
     "vehicle.cabin.infotainment.navigation.currentLocation.latitude",
-    "vehicle.cabin.infotainment.navigation.currentLocation.heading",
-    "vehicle.cabin.infotainment.navigation.currentLocation.speed",
-    # Mileage & fuel
-    "vehicle.chassis.mileage",
-    "vehicle.powertrain.combustionEngine.remainingFuelLiters",
-    "vehicle.powertrain.combustionEngine.remainingFuelPercent",
-    "vehicle.powertrain.combustionEngine.remainingRange",
-    "vehicle.powertrain.combustionEngine.combinedFuelConsumption",
     # Electric / charging
     "vehicle.powertrain.electric.battery.stateOfCharge",
     "vehicle.powertrain.electric.battery.remainingRange",
     "vehicle.powertrain.electric.battery.charging.power",
     "vehicle.powertrain.electric.battery.charging.status",
-    "vehicle.powertrain.electric.battery.charging.chargingTarget",
-    "vehicle.drivetrain.batteryManagement.header",
     "vehicle.drivetrain.batteryManagement.maxEnergy",
     "vehicle.drivetrain.electricEngine.charging.status",
     # Doors
     "vehicle.cabin.door.row1.driver.isOpen",
     "vehicle.cabin.door.row1.passenger.isOpen",
-    "vehicle.cabin.door.row2.driver.isOpen",
-    "vehicle.cabin.door.row2.passenger.isOpen",
-    # Door locks
-    "vehicle.cabin.door.row1.driver.isLocked",
-    "vehicle.cabin.door.row1.passenger.isLocked",
-    "vehicle.cabin.door.row2.driver.isLocked",
-    "vehicle.cabin.door.row2.passenger.isLocked",
-    # Windows
-    "vehicle.cabin.door.row1.driver.window.isOpen",
-    "vehicle.cabin.door.row1.passenger.window.isOpen",
-    "vehicle.cabin.door.row2.driver.window.isOpen",
-    "vehicle.cabin.door.row2.passenger.window.isOpen",
-    # Trunk / hood
-    "vehicle.body.trunk.isOpen",
-    "vehicle.body.hood.isOpen",
-    # Climate
-    "vehicle.cabin.hvac.ambientAirTemperature",
-    # Tyres
-    "vehicle.chassis.axle.row1.wheel.left.tire.pressure",
-    "vehicle.chassis.axle.row1.wheel.right.tire.pressure",
-    "vehicle.chassis.axle.row2.wheel.left.tire.pressure",
-    "vehicle.chassis.axle.row2.wheel.right.tire.pressure",
-    # Motion / parking
-    "vehicle.body.isMoving",
-    "vehicle.cabin.parkingBrake.isActive",
 ]

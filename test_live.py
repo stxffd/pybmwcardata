@@ -1,4 +1,4 @@
-"""Live functional test for python-bmw-cardata against real BMW CarData API.
+"""Live functional test for pybmwcardata against real BMW CarData API.
 
 Usage:
     python test_live.py --client-id YOUR_CLIENT_ID
@@ -20,15 +20,15 @@ from pathlib import Path
 
 import aiohttp
 
-from bmw_cardata.api import CarDataApiClient
-from bmw_cardata.auth import AbstractAuth, DeviceAuth
-from bmw_cardata.models import TokenResponse
-from bmw_cardata.mqtt import CarDataMqttClient, MqttMessage
+from pybmwcardata.api import CarDataApiClient
+from pybmwcardata.auth import AbstractAuth, DeviceAuth
+from pybmwcardata.models import TokenResponse
+from pybmwcardata.mqtt import CarDataMqttClient, MqttMessage
 
 TOKEN_CACHE_FILE = Path(__file__).parent / ".tokens.json"
 
 
-# ── Token persistence ────────────────────────────────────────────────
+# â”€â”€ Token persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _save_tokens(client_id: str, tokens: TokenResponse) -> None:
     """Save tokens to cache file."""
@@ -42,7 +42,7 @@ def _save_tokens(client_id: str, tokens: TokenResponse) -> None:
         "expires_at": time.time() + tokens.expires_in,
     }
     TOKEN_CACHE_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
-    print(f"  💾 Tokens gespeichert in {TOKEN_CACHE_FILE.name}")
+    print(f"  ðŸ’¾ Tokens gespeichert in {TOKEN_CACHE_FILE.name}")
 
 
 def _load_tokens() -> dict | None:
@@ -55,7 +55,7 @@ def _load_tokens() -> dict | None:
         return None
 
 
-# ── Simple concrete Auth using a static token ────────────────────────
+# â”€â”€ Simple concrete Auth using a static token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class LiveAuth(AbstractAuth):
     """Auth implementation that holds a token obtained from the device flow."""
@@ -68,19 +68,19 @@ class LiveAuth(AbstractAuth):
         return self._token
 
 
-# ── Helpers ──────────────────────────────────────────────────────────
+# â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _separator(title: str) -> None:
-    print(f"\n{'─' * 60}")
+    print(f"\n{'â”€' * 60}")
     print(f"  {title}")
-    print(f"{'─' * 60}")
+    print(f"{'â”€' * 60}")
 
 
 async def _authenticate(
     session: aiohttp.ClientSession, client_id: str
 ) -> TokenResponse:
     """Run the device-code flow interactively."""
-    _separator("1 · Device Code Flow – Authentifizierung")
+    _separator("1 Â· Device Code Flow â€“ Authentifizierung")
 
     device_auth = DeviceAuth(session)
     dc = await device_auth.request_device_code(client_id)
@@ -92,11 +92,11 @@ async def _authenticate(
     # Try to open the browser automatically
     try:
         webbrowser.open(dc.verification_uri)
-        print("\n  ➜ Browser wurde geöffnet. Gib dort den User-Code ein.")
+        print("\n  âžœ Browser wurde geÃ¶ffnet. Gib dort den User-Code ein.")
     except Exception:
-        print("\n  ➜ Öffne die URL manuell im Browser und gib den Code ein.")
+        print("\n  âžœ Ã–ffne die URL manuell im Browser und gib den Code ein.")
 
-    print("  Warte auf Autorisierung …\n")
+    print("  Warte auf Autorisierung â€¦\n")
 
     tokens = await device_auth.poll_for_tokens(
         client_id=client_id,
@@ -106,9 +106,9 @@ async def _authenticate(
         timeout=dc.expires_in,
     )
 
-    print("  ✔ Tokens erhalten!")
-    print(f"    access_token : {tokens.access_token[:20]}…")
-    print(f"    refresh_token: {tokens.refresh_token[:20]}…")
+    print("  âœ” Tokens erhalten!")
+    print(f"    access_token : {tokens.access_token[:20]}â€¦")
+    print(f"    refresh_token: {tokens.refresh_token[:20]}â€¦")
     print(f"    gcid         : {tokens.gcid}")
     print(f"    expires_in   : {tokens.expires_in}s")
     _save_tokens(client_id, tokens)
@@ -124,8 +124,8 @@ async def _get_or_refresh_tokens(
     if cached and cached.get("client_id") == client_id:
         # Check if access token is still valid (with 60s margin)
         if cached.get("expires_at", 0) > time.time() + 60:
-            _separator("1 · Auth – Gespeicherte Tokens verwenden")
-            print(f"  ✔ Access Token gültig (noch {int(cached['expires_at'] - time.time())}s)")
+            _separator("1 Â· Auth â€“ Gespeicherte Tokens verwenden")
+            print(f"  âœ” Access Token gÃ¼ltig (noch {int(cached['expires_at'] - time.time())}s)")
             return TokenResponse(
                 access_token=cached["access_token"],
                 token_type="Bearer",
@@ -136,29 +136,29 @@ async def _get_or_refresh_tokens(
                 gcid=cached.get("gcid", ""),
             )
 
-        # Access token expired – try refresh
+        # Access token expired â€“ try refresh
         if cached.get("refresh_token"):
-            _separator("1 · Auth – Token Refresh")
-            print("  Access Token abgelaufen, versuche Refresh …")
+            _separator("1 Â· Auth â€“ Token Refresh")
+            print("  Access Token abgelaufen, versuche Refresh â€¦")
             try:
                 device_auth = DeviceAuth(session)
                 tokens = await device_auth.refresh_tokens(client_id, cached["refresh_token"])
-                print("  ✔ Tokens per Refresh erneuert!")
-                print(f"    access_token : {tokens.access_token[:20]}…")
+                print("  âœ” Tokens per Refresh erneuert!")
+                print(f"    access_token : {tokens.access_token[:20]}â€¦")
                 print(f"    expires_in   : {tokens.expires_in}s")
                 _save_tokens(client_id, tokens)
                 return tokens
             except Exception as exc:
-                print(f"  ⚠ Refresh fehlgeschlagen: {exc}")
-                print("  → Starte neuen Device Code Flow …")
+                print(f"  âš  Refresh fehlgeschlagen: {exc}")
+                print("  â†’ Starte neuen Device Code Flow â€¦")
 
-    # No cached tokens or refresh failed → full device code flow
+    # No cached tokens or refresh failed â†’ full device code flow
     return await _authenticate(session, client_id)
 
 
 async def _test_vehicle_mappings(api: CarDataApiClient) -> list[str]:
     """Fetch and display vehicle mappings, return list of VINs."""
-    _separator("2 · Vehicle Mappings")
+    _separator("2 Â· Vehicle Mappings")
     mappings = await api.get_vehicle_mappings()
     if not mappings:
         print("  Keine Fahrzeuge gefunden.")
@@ -169,7 +169,7 @@ async def _test_vehicle_mappings(api: CarDataApiClient) -> list[str]:
 
 
 async def _test_basic_data(api: CarDataApiClient, vin: str) -> None:
-    _separator(f"3 · Basic Data – {vin}")
+    _separator(f"3 Â· Basic Data â€“ {vin}")
     vehicle = await api.get_basic_data(vin)
     fields = [
         ("Brand", vehicle.brand),
@@ -191,7 +191,7 @@ async def _test_basic_data(api: CarDataApiClient, vin: str) -> None:
 
 async def _test_containers(api: CarDataApiClient) -> str | None:
     """List containers, ensure one exists, return container_id."""
-    _separator("4 · Container")
+    _separator("4 Â· Container")
 
     containers = await api.list_containers()
     active_containers = [c for c in containers if c.state == "ACTIVE"]
@@ -203,43 +203,43 @@ async def _test_containers(api: CarDataApiClient) -> str | None:
 
     # Try to create a new container, fall back to existing one
     try:
-        print("\n  Versuche Container zu erstellen …")
+        print("\n  Versuche Container zu erstellen â€¦")
         container = await api.ensure_container(
             name="LiveTest",
-            purpose="Functional testing of python-bmw-cardata",
+            purpose="Functional testing of pybmwcardata",
         )
-        print(f"  ✔ Container: {container.container_id}  ({container.name})")
-        print(f"    Descriptors: {len(container.technical_descriptors)} Einträge")
+        print(f"  âœ” Container: {container.container_id}  ({container.name})")
+        print(f"    Descriptors: {len(container.technical_descriptors)} EintrÃ¤ge")
         return container.container_id
     except Exception as exc:
-        print(f"  ⚠ Erstellung fehlgeschlagen: {exc}")
+        print(f"  âš  Erstellung fehlgeschlagen: {exc}")
         if active_containers:
             fallback = active_containers[0]
-            print(f"  → Verwende existierenden Container: {fallback.container_id} ({fallback.name})")
+            print(f"  â†’ Verwende existierenden Container: {fallback.container_id} ({fallback.name})")
             return fallback.container_id
-        print("  ✘ Kein aktiver Container verfügbar.")
+        print("  âœ˜ Kein aktiver Container verfÃ¼gbar.")
         return None
 
 
 async def _test_telematic_data(
     api: CarDataApiClient, vin: str, container_id: str
 ) -> None:
-    _separator(f"5 · Telematic Data – {vin}")
+    _separator(f"5 Â· Telematic Data â€“ {vin}")
     entries = await api.get_telematic_data(vin, container_id)
     if not entries:
-        print("  Keine Telematikdaten verfügbar (Container evtl. gerade erst erstellt).")
+        print("  Keine Telematikdaten verfÃ¼gbar (Container evtl. gerade erst erstellt).")
         return
     for e in entries:
         print(f"  {e.name:55s}  =  {e.value} {e.unit}  ({e.timestamp})")
 
 
 async def _test_vehicle_image(api: CarDataApiClient, vin: str) -> None:
-    _separator(f"6 · Vehicle Image – {vin}")
+    _separator(f"6 Â· Vehicle Image â€“ {vin}")
     try:
         image_bytes = await api.get_vehicle_image(vin)
-        print(f"  ✔ Bild erhalten: {len(image_bytes)} Bytes")
+        print(f"  âœ” Bild erhalten: {len(image_bytes)} Bytes")
     except Exception as exc:
-        print(f"  ✘ Bild nicht verfügbar: {exc}")
+        print(f"  âœ˜ Bild nicht verfÃ¼gbar: {exc}")
 
 
 MQTT_HOST = "customer.streaming-cardata.bmwgroup.com"
@@ -248,14 +248,14 @@ MQTT_LISTEN_SECONDS = 30
 
 
 async def _test_mqtt(tokens: TokenResponse, vin: str) -> None:
-    _separator(f"7 · MQTT Streaming – {vin}")
+    _separator(f"7 Â· MQTT Streaming â€“ {vin}")
 
     message_count = 0
 
     async def on_message(msg: MqttMessage) -> None:
         nonlocal message_count
         message_count += 1
-        print(f"\n  📨 Nachricht #{message_count} (VIN: {msg.vin})")
+        print(f"\n  ðŸ“¨ Nachricht #{message_count} (VIN: {msg.vin})")
         for e in msg.entries:
             print(f"    {e.name:55s}  =  {e.value} {e.unit}")
         if not msg.entries:
@@ -275,7 +275,7 @@ async def _test_mqtt(tokens: TokenResponse, vin: str) -> None:
     print(f"  Host  : {MQTT_HOST}:{MQTT_PORT}")
     print(f"  GCID  : {tokens.gcid}")
     print(f"  Topic : {tokens.gcid}/{vin}")
-    print(f"  Warte {MQTT_LISTEN_SECONDS}s auf Nachrichten …\n")
+    print(f"  Warte {MQTT_LISTEN_SECONDS}s auf Nachrichten â€¦\n")
 
     await client.connect(vins=[vin])
 
@@ -284,13 +284,13 @@ async def _test_mqtt(tokens: TokenResponse, vin: str) -> None:
     await client.disconnect()
 
     if message_count == 0:
-        print(f"\n  ⚠ Keine Nachrichten in {MQTT_LISTEN_SECONDS}s empfangen.")
-        print("    (Normal wenn Fahrzeug geparkt/aus – Daten kommen nur bei Zustandsänderung)")
+        print(f"\n  âš  Keine Nachrichten in {MQTT_LISTEN_SECONDS}s empfangen.")
+        print("    (Normal wenn Fahrzeug geparkt/aus â€“ Daten kommen nur bei ZustandsÃ¤nderung)")
     else:
-        print(f"\n  ✔ {message_count} Nachricht(en) empfangen.")
+        print(f"\n  âœ” {message_count} Nachricht(en) empfangen.")
 
 
-# ── Main ─────────────────────────────────────────────────────────────
+# â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Live-Test der BMW CarData Library")
@@ -304,9 +304,9 @@ async def main() -> None:
         cached = _load_tokens()
         if cached and cached.get("client_id"):
             client_id = cached["client_id"]
-            print(f"  ℹ Client ID aus .tokens.json geladen: {client_id}")
+            print(f"  â„¹ Client ID aus .tokens.json geladen: {client_id}")
         else:
-            print("  ✘ Fehler: --client-id erforderlich (kein cached token vorhanden)")
+            print("  âœ˜ Fehler: --client-id erforderlich (kein cached token vorhanden)")
             sys.exit(1)
 
     async with aiohttp.ClientSession() as session:
@@ -321,48 +321,48 @@ async def main() -> None:
         try:
             vins = await _test_vehicle_mappings(api)
         except Exception as exc:
-            print(f"  ✘ Fehler: {exc}")
+            print(f"  âœ˜ Fehler: {exc}")
             vins = []
 
         # Pick VIN to test
         vin = args.vin or (vins[0] if vins else None)
         if not vin:
-            print("\n  Keine VIN verfügbar. Beende Test.")
+            print("\n  Keine VIN verfÃ¼gbar. Beende Test.")
             return
 
-        print(f"\n  → Teste mit VIN: {vin}")
+        print(f"\n  â†’ Teste mit VIN: {vin}")
 
         # 3) Basic Data
         try:
             await _test_basic_data(api, vin)
         except Exception as exc:
-            print(f"  ✘ Fehler: {exc}")
+            print(f"  âœ˜ Fehler: {exc}")
 
         # 4) Containers
         container_id = None
         try:
             container_id = await _test_containers(api)
         except Exception as exc:
-            print(f"  ✘ Fehler: {exc}")
+            print(f"  âœ˜ Fehler: {exc}")
 
         # 5) Telematic Data
         if container_id:
             try:
                 await _test_telematic_data(api, vin, container_id)
             except Exception as exc:
-                print(f"  ✘ Fehler: {exc}")
+                print(f"  âœ˜ Fehler: {exc}")
 
         # 6) Vehicle Image
         try:
             await _test_vehicle_image(api, vin)
         except Exception as exc:
-            print(f"  ✘ Fehler: {exc}")
+            print(f"  âœ˜ Fehler: {exc}")
 
         # 7) MQTT Streaming
         try:
             await _test_mqtt(tokens, vin)
         except Exception as exc:
-            print(f"  ✘ MQTT Fehler: {exc}")
+            print(f"  âœ˜ MQTT Fehler: {exc}")
 
         _separator("Fertig!")
         print("  Alle Tests abgeschlossen.\n")
@@ -370,3 +370,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+

@@ -1,4 +1,4 @@
-"""Shared test fixtures for python-bmw-cardata tests."""
+"""Shared test fixtures for pybmwcardata tests."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from aiohttp import ClientResponse, ClientSession
 
-from bmw_cardata.auth import AbstractAuth
+from pybmwcardata.auth import AbstractAuth
 
 
 class MockAuth(AbstractAuth):
@@ -50,7 +50,7 @@ def mock_auth(mock_session: AsyncMock) -> MockAuth:
     return MockAuth(mock_session)
 
 
-# ── Sample API response data ────────────────────────────────────────
+# â”€â”€ Sample API response data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 SAMPLE_VEHICLE_MAPPINGS = [
     {
@@ -156,7 +156,7 @@ SAMPLE_CHARGING_HISTORY = {
             "chargingLocation": {
                 "municipality": "Munich",
                 "formattedAddress": "Munich, Germany",
-                "streetAddress": "Hauptstraße 1",
+                "streetAddress": "HauptstraÃŸe 1",
                 "mapMatchedLatitude": 48.137,
                 "mapMatchedLongitude": 11.576,
             },
@@ -224,3 +224,4 @@ SAMPLE_TOKEN_RESPONSE = {
     "id_token": "eyJ-id-token",
     "gcid": "gcid-12345-abcde",
 }
+

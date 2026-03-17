@@ -1,4 +1,4 @@
-# python-bmw-cardata
+# pybmwcardata
 
 Async Python client library for the [BMW CarData API](https://bmw-cardata.bmwgroup.com).
 
@@ -13,7 +13,7 @@ Async Python client library for the [BMW CarData API](https://bmw-cardata.bmwgro
 ## Installation
 
 ```bash
-pip install python-bmw-cardata
+pip install pybmwcardata
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ pip install python-bmw-cardata
 ```python
 import asyncio
 from aiohttp import ClientSession
-from bmw_cardata import CarDataApiClient, DeviceAuth
+from pybmwcardata import CarDataApiClient, DeviceAuth
 
 async def main():
     async with ClientSession() as session:
@@ -61,7 +61,7 @@ This library follows the [Home Assistant API library guide](https://developers.h
 The `AbstractAuth` class allows Home Assistant to manage token refresh:
 
 ```python
-from bmw_cardata.auth import AbstractAuth
+from pybmwcardata.auth import AbstractAuth
 
 class HACarDataAuth(AbstractAuth):
     def __init__(self, session, config_entry):
@@ -88,3 +88,4 @@ class HACarDataAuth(AbstractAuth):
 ## License
 
 Apache License 2.0
+

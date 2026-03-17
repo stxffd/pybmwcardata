@@ -1,1 +1,2 @@
-"""Tests for python-bmw-cardata library."""
+"""Tests for pybmwcardata library."""
+
